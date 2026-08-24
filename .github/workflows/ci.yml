@@ -1,23 +1,47 @@
-name: CI
+name: Deploy
 on:
-  pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
-  test:
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11", "3.12"]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        exclude:
-          - os: macos-latest
-            python-version: "3.10"
-    runs-on: ${{ matrix.os }}
+  build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v5
+      - id: build-step                                         # gives this step an addressable name
+        run: ./scripts/build.sh                            # the script writes "tarball=..." to $GITHUB_OUTPUT
+      - uses: actions/upload-artifact@v4
         with:
-          python-version: ${{ matrix.python-version }}
-      - run: pip install -r requirements.txt
-      - run: pytest
+          name: pipeline-bundle
+          path: ./dist
+
+  deploy-dev:
+    needs: build
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: pipeline-bundle
+      - run: ./scripts/deploy.sh dev
+
+  deploy-test:
+    needs: deploy-dev
+    environment: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: pipeline-bundle
+      - run: ./scripts/deploy.sh test
+
+  deploy-prod:
+    needs: deploy-test
+    environment: prod
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: pipeline-bundle
+      - run: ./scripts/deploy.sh prod
