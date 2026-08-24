@@ -24,7 +24,9 @@ jobs:
       - uses: actions/download-artifact@v5
         with:
           name: pipeline-bundle
-      - run: ./scripts/deploy.sh dev
+      - run: | 
+          chmod +x dist/scripts/*.sh
+          ./scripts/deploy.sh dev
 
   deploy-test:
     needs: deploy-dev
@@ -34,7 +36,9 @@ jobs:
       - uses: actions/download-artifact@v5
         with:
           name: pipeline-bundle
-      - run: ./scripts/deploy.sh test
+      - run: |
+          chmod +x dist/scripts/*.sh
+          ./scripts/deploy.sh test
 
   deploy-prod:
     needs: deploy-test
@@ -44,4 +48,6 @@ jobs:
       - uses: actions/download-artifact@v5
         with:
           name: pipeline-bundle
-      - run: ./scripts/deploy.sh prod
+      - run: |
+          chmod +x dist/scripts/*.sh
+          ./scripts/deploy.sh prod
