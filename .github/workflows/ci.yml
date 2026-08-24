@@ -25,8 +25,8 @@ jobs:
         with:
           name: pipeline-bundle
       - run: | 
-          chmod +x dist/scripts/*.sh
-          ./scripts/deploy.sh dev
+          chmod +x scripts/*.sh
+          scripts/deploy.sh dev
 
   deploy-test:
     needs: deploy-dev
@@ -37,8 +37,8 @@ jobs:
         with:
           name: pipeline-bundle
       - run: |
-          chmod +x dist/scripts/*.sh
-          ./scripts/deploy.sh test
+          chmod +x scripts/*.sh
+          scripts/deploy.sh test
 
   deploy-prod:
     needs: deploy-test
@@ -49,5 +49,5 @@ jobs:
         with:
           name: pipeline-bundle
       - run: |
-          chmod +x dist/scripts/*.sh
-          ./scripts/deploy.sh prod
+          chmod +x scripts/*.sh
+          scripts/deploy.sh prod
