@@ -25,6 +25,8 @@ jobs:
         with:
           name: pipeline-bundle
       - run: | 
+          pwd
+          find .
           chmod +x ./scripts/*.sh
           ./scripts/deploy.sh dev
 
@@ -49,7 +51,5 @@ jobs:
         with:
           name: pipeline-bundle
       - run: |
-          pwd
-          find .
           chmod +x ./scripts/*.sh
           ./scripts/deploy.sh prod
