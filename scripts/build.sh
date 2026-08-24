@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TARBALL="my-app-$(date +%Y%m%d).tar.gz"
+mkdir -p dist
 
-echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
+echo "Build output" > dist/build.txt
+
+echo "tarball=build.txt" >> "$GITHUB_OUTPUT"
