@@ -1,6 +1,6 @@
 name: CI
 on:
-  push:
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -21,27 +21,38 @@ jobs:
     environment: dev
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v5
         with:
           name: pipeline-bundle
-      - run: ./scripts/deploy.sh dev
+      - run: | 
+          pwd
+          find .
+          chmod +x ./scripts/*.sh
+          ./scripts/deploy.sh dev
 
   deploy-test:
     needs: deploy-dev
     environment: test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v5
         with:
           name: pipeline-bundle
-      - run: ./scripts/deploy.sh test
+      - run: |
+          chmod +x ./scripts/*.sh
+          ./scripts/deploy.sh test
 
   deploy-prod:
     needs: deploy-test
     environment: prod
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v5
         with:
           name: pipeline-bundle
-      - run: ./scripts/deploy.sh prod
+      - run: |
+          chmod +x ./scripts/*.sh
+          ./scripts/deploy.sh prod
