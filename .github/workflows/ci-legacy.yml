@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        check:
+          - "ruff check src tests"
+          - "pytest tests/unit"
+          - "pytest tests/integration"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: echo "Pretending to install requirements"
+
+      - run: echo "${{ matrix.check }}"
