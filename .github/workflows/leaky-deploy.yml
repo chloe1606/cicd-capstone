@@ -13,9 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: ./scripts/deploy.sh
+      - run: ./scripts/leaky-deploy.sh dev
         env:
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
 
   deploy-uat:
     runs-on: ubuntu-latest
@@ -25,6 +25,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: ./scripts/deploy.sh
+      - run: ./scripts/leaky-deploy.sh uat
         env:
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          UAT_DB_PASSWORD: ${{ secrets.UAT_DB_PASSWORD }}
