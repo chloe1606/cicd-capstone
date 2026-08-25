@@ -1,6 +1,6 @@
 import duckdb
 
-from ..pipeline import build_revenue
+from pyramid_lab.pipeline import build_revenue
 
 
 def test_output_shape():
