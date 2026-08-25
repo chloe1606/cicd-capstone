@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -euo pipefail
 
-echo "Pretending to deploy to $1"
+echo "Deploy script received SNOWFLAKE_PASSWORD"
