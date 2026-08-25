@@ -3,6 +3,7 @@ import duckdb
 REVENUE_SQL = """
   select
     order_id,
+    status,
     case when status = 'cancelled' then 0
          else amount - coalesce(refund_amount, 0)
     end as net_revenue
