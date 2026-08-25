@@ -1,6 +1,6 @@
 import duckdb
 
-from pyramid_lab.pipeline import build_revenue
+from ..pipeline import build_revenue
 
 
 def test_refund_is_subtracted():

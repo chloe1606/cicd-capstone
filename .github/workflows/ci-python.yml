@@ -16,5 +16,7 @@ jobs:
           python-version: "3.11"
 
       - run: pip install pytest duckdb
-
+      - run: |
+          pwd
+          find . -type f
       - run: pytest -v
