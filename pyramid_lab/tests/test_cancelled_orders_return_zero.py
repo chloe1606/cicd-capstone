@@ -1,6 +1,5 @@
 import duckdb
-
-from pyramid_lab.pipeline import build_revenue
+from pipeline import build_revenue
 
 
 def test_cancelled_orders_have_zero_revenue():
