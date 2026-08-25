@@ -1,6 +1,8 @@
 name: CI
 on:
-  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   test:
@@ -22,6 +24,12 @@ jobs:
     environment: staging
     if: github.ref == 'refs/heads/main'
     steps:
+      - uses: actions/checkout@v7
       - run: ./scripts/deploy.sh
         env:
-          SNOWFLAKE_PASSWORD: $SNOWFLAKE_PASSWORD
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+
+
+# The workflow only triggered on pull_request. A push to main did not match on:, so the workflow did not run at all on merge. Add push: branches: [main] to on:.
+# SNOWFLAKE_PASSWORD: $SNOWFLAKE_PASSWORD is shell interpolation, not Actions expression syntax. The runner expanded $SNOWFLAKE_PASSWORD against its own environment, which was empty. Use ${{ secrets.SNOWFLAKE_PASSWORD }}.
+# The deploy job had no actions/checkout@v7, so ./scripts/deploy.sh did not exist on the runner. Add the checkout step.
