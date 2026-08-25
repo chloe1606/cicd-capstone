@@ -1,0 +1,97 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    outputs:
+      artifact-name: pipeline-bundle
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build artifact
+        run: |
+          mkdir -p dist
+          date > dist/build.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-bundle
+          path: dist
+
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: pipeline-bundle
+
+      - name: Deploy dev
+        run: |
+          echo "Deploying to dev"
+          find .
+
+  deploy-test:
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    environment: test
+
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: pipeline-bundle
+
+      - name: Deploy test
+        run: |
+          echo "Deploying to test"
+
+  prod-guardrail:
+    needs: deploy-test
+    runs-on: ubuntu-latest
+
+    outputs:
+      allowed: ${{ steps.branch-check.outputs.allowed }}
+
+    steps:
+      - id: branch-check
+
+        run: |
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+            echo "Prod blocked: branch is ${GITHUB_REF_NAME}"
+          fi
+
+  deploy-prod:
+    needs: prod-guardrail
+
+    if: needs.prod-guardrail.outputs.allowed == 'true'
+
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: pipeline-bundle
+
+      - name: Cancellation window
+        run: |
+          echo "Waiting 60 seconds before deployment..."
+          sleep 60
+
+      - name: Deploy prod
+        run: |
+          echo "Deploying to prod"
